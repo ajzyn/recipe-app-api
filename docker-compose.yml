@@ -1,0 +1,23 @@
+# określa składnię której z wersji docker compose używamy. jeżeli nowa wersja będzie miała inny syntax to nasz docker compose dalej będzie działał
+version: "3.9"
+
+services:
+  app:
+  # opcje związane z budowaniem obrazu z Dockerfile
+    build:
+    # definiuje z jakiego katalogu użyć Dockerfile
+      context: .
+      # ustawia zmienną DEV na true, która będzie przekazana do Dockerfile podczas builda
+      args:
+        - DEV=true
+    # definiuje mapowanie portów -port 8000 na hoście (moim komputerze) będzie przekierowany do portu 8000 w kontenerze. 
+    # aplikacja działa na porcie 8000; Dockerfile ma EXPOSE 8000 czyli udostępnia port 8000, a my w tej linij przekazujemy port 8000 z naszego kompa do 8000 dockera
+    ports:
+      - "8000:8000"
+    # obustronne udostępnianie katalogu roboczego pomiędzy dockerem a kompem
+    # pozwala to na biężąco "przesyłać" nowe/updatowane pliki pomiędzy kompem a obrazem - czyli nie musimy robić rebuild dockerfile po każdej zmianie
+    # różnica pomiędzy COPY w Dockerfile jest taka, że COPY kopiuje tylko podczas budowania, a volumes zapewnia że będą up to date podczas używania dockera
+    volumes:
+      - "./app:/app"
+    # jeżeli nie określimy żadnej komendy podczas odpalania docker-compose to będzie uzywał tej komendy domyślnie  
+    command: sh -c "python manage.py runserver 0.0.0.0:8000"
