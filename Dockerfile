@@ -1,5 +1,6 @@
 # Dockerfile to obraz, a docker-compose pozwala nam na odpalania i konifgurowanie wielu obrazów z których składa się aplikacja
 # ALPINE to najlżejsze wersje pajtona
+# żeby nie mieć limitów podczas pobierania tego obrazu podczas budowania aplikacji na github actions, musze zalogować się do docker hub w github actions
 FROM python:3.9-alpine3.13
 # kto utrzymuje kod
 LABEL maintainer="ajzyn"
