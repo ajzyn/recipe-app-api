@@ -26,6 +26,12 @@ ARG DEV=false
 RUN python -m venv /py && \
     # upgejduje pip
     /py/bin/pip install --upgrade pip && \
+    # instaluje paczkę która jest potrzeba do łącznie z postgres - adapter
+    apk add --update --no-cache postgresql-client && \
+    # Ta opcja tworzy wirtualny pakiet o nazwie .tmp-build-deps, który jest zestawem tymczasowych zależności wymaganych do budowy aplikacji.
+    #  Po zakończeniu procesu budowy te tymczasowe zależności mogą zostać łatwo usunięte za pomocą jednej komendy, co pomaga utrzymać obraz Docker w małym rozmiarze.
+    apk add --update --no-cache --virtual .tmp-build-deps \
+        build-base postgresql-dev musl-dev && \
     # instaluje requiremenety które były kopiowane w linij 10
     /py/bin/pip install -r /tmp/requirements.txt && \
     # jeżeli zmienna DEV === true to wykonuje blok if. zwróć uwagę, że muszą być spację pomiędzy [] i przed [
@@ -35,6 +41,7 @@ RUN python -m venv /py && \
     fi && \    
     # usuwa fodler /tmp >>> rm = remove ; r = recursive ( czyli usuwa również pliki i folderu z wnętrza usuwanego katalogu ); f = force; /tmp = usuwany folder
     rm -rf /tmp && \
+    apk del .tmp-build-deps && \
     # dodaje usera do linuxa, żeby nie używać roota ( niezalecena jest używanie roota ze względu na ewentualne ataki )
     adduser \
         --disabled-password \
