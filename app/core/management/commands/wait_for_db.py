@@ -19,6 +19,7 @@ class Command(BaseCommand):
         db_up = False
         while db_up is False:
             try:
+                # wbudowana metoda która sprawdza czy baza wstała
                 self.check(databases=['default'])
                 db_up = True
             except (Psycopg2Error, OperationalError):
